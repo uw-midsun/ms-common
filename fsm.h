@@ -10,37 +10,18 @@
 // additionally track the last processed event.
 
 #include <stdint.h>
-#include <event_queue.h>
+#include "event_queue.h"
+#include "fsm_internal.h"
 
-#define FSM_DECLARE_STATE(state) \
-FSM_STATE_TRANSITION(state); \
-static State state = { .name = #state, .table = prv_fsm_##state }
-
-#define FSM_STATE_TRANSITION(state) \
-static void prv_fsm_##state(FSM *fsm, const Event *e, bool *transitioned)
-
-#define FSM_ADD_TRANSITION(event_id, state) \
-do { \
-  if (e->id == event_id) { \
-    fsm->last_state = fsm->current_state; \
-    fsm->current_state = &state; \
-    *transitioned = true; \
-\
-    if (fsm->current_state->output != NULL) { \
-      fsm->current_state->output(fsm, e); \
-    } \
-\
-    return; \
-  } \
-} while (0)
+// Forward-declares the state for use.
+#define FSM_DECLARE_STATE(state) _FSM_DECLARE_STATE(state)
+// Defines the state transition table.
+#define FSM_STATE_TRANSITION(state) _FSM_STATE_TRANSITION(state)
+// Adds an entry to the state transition table.
+#define FSM_ADD_TRANSITION(event_id, state) _FSM_ADD_TRANSITION(event_id, state)
 
 // Initializes an FSM state with an output function.
-#define fsm_state_init(state, output_func) \
-do { \
-  state.output = (output_func); \
-  state.name = #state; \
-  state.table = prv_fsm_##state; \
-} while (0)
+#define fsm_state_init(state, output_func) _fsm_state_init(state, output_func)
 
 struct FSM;
 typedef void (*StateOutput)(struct FSM *fsm, const Event *e);

@@ -16,7 +16,7 @@ FSM_DECLARE_STATE(state_a);
 FSM_DECLARE_STATE(state_b);
 FSM_DECLARE_STATE(state_c);
 
-static void prv_print_state(struct FSM *fsm, const Event *e) {
+static void prv_print_state(FSM *fsm, const Event *e) {
   printf("Entered %s (event %u occurred)\n", fsm->current_state->name, e->id);
 }
 
@@ -29,7 +29,7 @@ int main() {
   fsm_init(&test_fsm, "Test FSM", &state_a);
 
   while (true) {
-    struct Event e = {
+    Event e = {
       .id = rand() % NUM_EVENTS
     };
 
