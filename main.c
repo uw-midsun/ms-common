@@ -4,10 +4,6 @@
 #include <time.h>
 #include "fsm.h"
 
-#define DUMP_STATE() printf("Entered %s\n", __func__)
-
-FSM test_fsm;
-
 typedef enum {
   EVENT_A = 0,
   EVENT_B,
@@ -15,6 +11,7 @@ typedef enum {
   NUM_EVENTS
 } EventID;
 
+FSM test_fsm;
 FSM_DECLARE_STATE(state_a);
 FSM_DECLARE_STATE(state_b);
 FSM_DECLARE_STATE(state_c);
