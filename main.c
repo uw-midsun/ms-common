@@ -19,9 +19,17 @@ FSM_DECLARE_STATE(state_a);
 FSM_DECLARE_STATE(state_b);
 FSM_DECLARE_STATE(state_c);
 
+static void prv_print_state(struct FSM *fsm, const Event *e) {
+  printf("Entered %s (event %u occurred)\n", fsm->current_state->name, e->id);
+}
+
 int main() {
   srand(time(NULL));
-  fsm_init(&test_fsm, "Test FSM", state_a);
+
+  fsm_state_init(state_a, prv_print_state);
+  fsm_state_init(state_b, prv_print_state);
+  fsm_state_init(state_c, prv_print_state);
+  fsm_init(&test_fsm, "Test FSM", &state_a);
 
   while (true) {
     struct Event e = {
@@ -30,10 +38,10 @@ int main() {
 
     if (fsm_process_event(&test_fsm, &e)) {
       printf("[%s] Processed event %u, moving %s -> %s\n",
-             test_fsm.name, e.id, test_fsm.last_state_name, test_fsm.state_name);
+             test_fsm.name, e.id, test_fsm.last_state->name, test_fsm.current_state->name);
     } else {
       printf("[%s] Failed to process event %u in %s\n",
-             test_fsm.name, e.id, test_fsm.state_name);
+             test_fsm.name, e.id, test_fsm.current_state->name);
     }
 
     sleep(1);
@@ -42,28 +50,15 @@ int main() {
   return 0;
 }
 
-FSM_DECLARE_STATE(state_a) {
-  DUMP_STATE();
-  switch (e->id) {
-    case EVENT_B:
-      FSM_TRANSITION(state_b);
-    case EVENT_C:
-      FSM_TRANSITION(state_c);
-  }
+FSM_STATE_TRANSITION(state_a) {
+  FSM_ADD_TRANSITION(EVENT_B, state_b);
+  FSM_ADD_TRANSITION(EVENT_C, state_c);
 }
 
-FSM_DECLARE_STATE(state_b) {
-  DUMP_STATE();
-  switch (e->id) {
-    case EVENT_A:
-      FSM_TRANSITION(state_a);
-  }
+FSM_STATE_TRANSITION(state_b) {
+  FSM_ADD_TRANSITION(EVENT_C, state_c);
 }
 
-FSM_DECLARE_STATE(state_c) {
-  DUMP_STATE();
-  switch(e->id) {
-    case EVENT_B:
-      FSM_TRANSITION(state_b);
-  }
+FSM_STATE_TRANSITION(state_c) {
+  FSM_ADD_TRANSITION(EVENT_B, state_b);
 }
