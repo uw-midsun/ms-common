@@ -1,5 +1,9 @@
 #pragma once
-// Internal FSM header. Used to clean up the main interface.
+// Internal FSM header. Do not call macros directly.
+//
+// This implementation attempts to simplify the creation of a transition table by declaring it
+// as a function. We use macros to hide that function, proving an interface to declare simple
+// transition tables. If needed, we could add simple guards quite easily.
 
 #define _FSM_DECLARE_STATE(state) \
 _FSM_STATE_TRANSITION(state); \
