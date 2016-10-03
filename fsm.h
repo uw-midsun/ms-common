@@ -1,4 +1,14 @@
 #pragma once
+// FSM Interface
+//
+// For every event that is processed (i.e results in a transition), the new state's output is called.
+// This implementation attempts to simplify the creation of a transition table by declaring it
+// as a function. We use macros to hide that function, proving an interface to declare simple
+// transition tables. If needed, we could add simple guards quite easily.
+//
+// The FSM keeps track of both current and last states for debug purposes. It would be trivial to
+// additionally track the last processed event.
+
 #include <stdint.h>
 #include <event_queue.h>
 
@@ -24,6 +34,7 @@ do { \
   } \
 } while (0)
 
+// Initializes an FSM state with an output function.
 #define fsm_state_init(state, output_func) \
 do { \
   state.output = (output_func); \
