@@ -27,7 +27,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "event_queue.h"
-#include "fsm_internal.h"
+#include "fsm_impl.h"
 
 // Forward-declares the state for use.
 #define FSM_DECLARE_STATE(state) _FSM_DECLARE_STATE(state)
