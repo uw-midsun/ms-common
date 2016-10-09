@@ -17,13 +17,13 @@ typedef struct GPIOAddress {
 typedef enum {
   PIN_DIR_IN = 0,
   PIN_DIR_OUT,
-} PIN_DIR;
+} PinDir;
 
 // For setting the output value of the pin
 typedef enum {
   PIN_STATE_LOW = 0,
   PIN_STATE_HIGH,
-} PIN_STATE;
+} PinState;
 
 // For setting the internal pull-up/pull-down resistor (Turn off if a hardware
 // PUPDR is enabled). Different on MSP and STM for MSP RES_UP and RES_DOWN both
@@ -33,7 +33,7 @@ typedef enum {
   PIN_RES_OFF = 0,
   PIN_RES_PULLUP,
   PIN_RES_PULLDOWN,
-} PIN_RES;
+} PinRes;
 
 // For setting the alternate function on the pin
 // Applicable to STM, on MSP just set the PIN_SEL to 1 unless PIN_AF0 is passed
@@ -50,7 +50,7 @@ typedef enum {
   PIN_AF_7,
   PIN_AF_ANALOG,  // Clever way to make DIR analog for STM as PIN_AF and Analog
                   // are mutually exclusive
-} PIN_AF;
+} PinAF;
 
 // Ignored settings:
 // Speed - should be set when a pin is initialized and not touched again
@@ -62,11 +62,11 @@ typedef enum {
 // Could separate out the address from the settings
 typedef struct GPIOSettings {
   const GPIOAddress addr;  // 2 bytes
-  PIN_DIR dir;             // 1 bit
-  PIN_STATE state;         // 1 bit
-  PIN_RES res;             // 2 bits (one unused option)
-  PIN_AF alt;  // 4 bits (no padding needed if the compiler is smart about enums
-               // 7 unused options)
+  PinDir dir;              // 1 bit
+  PinState state;          // 1 bit
+  PinRes res;              // 2 bits (one unused option)
+  PinAF alt;  // 4 bits (no padding needed if the compiler is smart about enums
+              // 7 unused options)
 } GPIOSettings;
 
 // Initializes GPIO globally, sets all pins to lowest power mode
