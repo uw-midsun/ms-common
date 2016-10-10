@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 
-// GPIO Pin "address" to be used to change that pin's settings
+// GPIO GPIO "address" to be used to change that pin's settings
 // Use bytes instead of words to save on memory also convenient for MSP430
 // compatibility
 typedef struct GPIOAddress {
@@ -19,42 +19,45 @@ typedef struct GPIOAddress {
 
 // For setting the direction of the pin
 typedef enum {
-  PIN_DIR_IN = 0,
-  PIN_DIR_OUT,
-} PinDir;
+  GPIO_DIR_IN = 0,
+  GPIO_DIR_OUT,
+} GPIODir;
 
 // For setting the output value of the pin
 typedef enum {
-  PIN_STATE_LOW = 0,
-  PIN_STATE_HIGH,
-} PinState;
+  GPIO_STATE_LOW = 0,
+  GPIO_STATE_HIGH,
+} GPIOState;
 
 // For setting the internal pull-up/pull-down resistor (Turn off if a hardware
 // PUPDR is enabled). Different on MSP and STM for MSP RES_UP and RES_DOWN both
-// set PIN_REN to 1. Could make this RES_ON, RES_OFF and make pullup and
-// pulldown vary with the PIN_VAL the same way it works for the MSP430
+// set GPIO_REN to 1. Could make this RES_ON, RES_OFF and make pullup and
+// pulldown vary with the GPIO_VAL the same way it works for the MSP430
 typedef enum {
-  PIN_RES_NONE = 0,
-  PIN_RES_PULLUP,
-  PIN_RES_PULLDOWN,
-} PinRes;
+  GPIO_RES_NONE = 0,
+  GPIO_RES_PULLUP,
+  GPIO_RES_PULLDOWN,
+} GPIORes;
 
 // For setting the alternate function on the pin
-// Applicable to STM, on MSP just set the PIN_SEL to 1 unless PIN_AF0 is passed
-// On STM if an PIN_AF is passed set PIN_MODER to 2 instead of IN or OUT, ANALOG
+// Applicable to STM, on MSP just set the GPIO_SEL to 1 unless GPIO_AF0 is
+// passed
+// On STM if an GPIO_AF is passed set GPIO_MODER to 2 instead of IN or OUT,
+// ANALOG
 // sets to 3
 typedef enum {
-  PIN_AF_0 = 0,
-  PIN_AF_1,
-  PIN_AF_2,
-  PIN_AF_3,
-  PIN_AF_4,
-  PIN_AF_5,
-  PIN_AF_6,
-  PIN_AF_7,
-  PIN_AF_ANALOG,  // Clever way to make DIR analog for STM as PIN_AF and Analog
-                  // are mutually exclusive
-} PinAF;
+  GPIO_AF_0 = 0,
+  GPIO_AF_1,
+  GPIO_AF_2,
+  GPIO_AF_3,
+  GPIO_AF_4,
+  GPIO_AF_5,
+  GPIO_AF_6,
+  GPIO_AF_7,
+  GPIO_AF_ANALOG,  // Clever way to make DIR analog for STM as GPIO_AF and
+                   // Analog
+                   // are mutually exclusive
+} GPIOAF;
 
 // Ignored settings:
 // Speed - should be set when a pin is initialized and not touched again
@@ -65,10 +68,10 @@ typedef enum {
 // Address is separated to save memory and make the interface cleaner
 // Struct is 4 bytes and will fit in one memory register.
 typedef struct GPIOSettings {
-  PinDir dir;
-  PinState state;
-  PinRes res;
-  PinAF alt;
+  GPIODir dir;
+  GPIOState state;
+  GPIORes res;
+  GPIOAF alt;
 } GPIOSettings;
 
 // Initializes GPIO globally, sets all pins to lowest power mode
@@ -78,10 +81,10 @@ void gpio_init();
 void gpio_init_pin(GPIOAddress *address, GPIOSettings *settings);
 
 // Set the pin by address
-void gpio_set_pin_state(GPIOAddress *address, PinState *state);
+void gpio_set_pin_state(GPIOAddress *address, GPIOState *state);
 
 // Toggles the output state of the pin
 void gpio_toggle_state(GPIOAddress *address);
 
 // Gets the value of the input register for a pin
-PinState gpio_get_value(GPIOAddress *address);
+GPIOState gpio_get_value(GPIOAddress *address);
