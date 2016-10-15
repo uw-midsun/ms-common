@@ -44,7 +44,6 @@ typedef enum {
 
 // GPIO settings for setting the value of a pin
 typedef struct GPIOSettings {
-  GPIOAddress address;
   GPIODir direction;
   GPIOState state;
   GPIORes resistor;
@@ -55,7 +54,7 @@ typedef struct GPIOSettings {
 void gpio_init();
 
 // Initializes a GPIO pin
-void gpio_init_pin(GPIOSettings *settings);
+void gpio_init_pin(GPIOAddress *address, GPIOSettings *settings);
 
 // Set the pin state by address
 void gpio_set_pin_state(GPIOAddress *address, GPIOState *state);
