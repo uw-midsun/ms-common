@@ -31,24 +31,24 @@ typedef enum {
 
 // For setting the alternate function on the pin
 typedef enum {
-  GPIO_ALTF_0 = 0,
-  GPIO_ALTF_1,
-  GPIO_ALTF_2,
-  GPIO_ALTF_3,
-  GPIO_ALTF_4,
-  GPIO_ALTF_5,
-  GPIO_ALTF_6,
-  GPIO_ALTF_7,
-  GPIO_ALTF_ANALOG,
-  GPIO_ALTF_NONE,
-} GPIOAltF;
+  GPIO_ALTFN_NONE,
+  GPIO_ALTFN_0 = 0,
+  GPIO_ALTFN_1,
+  GPIO_ALTFN_2,
+  GPIO_ALTFN_3,
+  GPIO_ALTFN_4,
+  GPIO_ALTFN_5,
+  GPIO_ALTFN_6,
+  GPIO_ALTFN_7,
+  GPIO_ALTFN_ANALOG,
+} GPIOAltFn;
 
 // GPIO settings for setting the value of a pin
 typedef struct GPIOSettings {
   GPIODir direction;
   GPIOState state;
   GPIORes resistor;
-  GPIOAltF alt_function;
+  GPIOAltFn alt_function;
 } GPIOSettings;
 
 // Initializes GPIO globally, sets all pins to lowest power mode
