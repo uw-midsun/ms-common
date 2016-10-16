@@ -7,14 +7,14 @@ static GPIO_TypeDef *gpio_port_map[] = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF
 
 // Map the uint8_t version of the pin to the uint16_t used by the gpio functions.
 // This isn't a linear map hence the switch case.
-static uint16_t prv_gpio_pin_map(uint8_t pin) {
+static uint16_t prv_pin_map(uint8_t pin) {
   assert_param(pin < 16);
   return 0x01 << pin;
 }
 
 // Parse the GPIO settings and a pin number to create an initialization stuct to be used by the
 // CMSIS HAL.
-static GPIO_InitTypeDef prv_gpio_parse_args(uint8_t pin, GPIOSettings *settings) {
+static GPIO_InitTypeDef *prv_parse_args(uint8_t pin, GPIOSettings *settings) {
   GPIO_InitTypeDef init_struct;
 
   // Parse the GPIOAltF settings which are used to modify the mode and Alt Function.
@@ -27,12 +27,12 @@ static GPIO_InitTypeDef prv_gpio_parse_args(uint8_t pin, GPIOSettings *settings)
     init_struct.GPIO_Mode = settings->alt_function - 1;
   }
   init_struct.GPIO_PuPd = settings->resistor;
-  init_struct.GPIO_Pin = prv_gpio_pin_map(pin);
+  init_struct.GPIO_Pin = prv_pin_map(pin);
 
   // These are default values which are not intended to be changed.
   init_struct.GPIO_Speed = GPIO_Speed_Level_1;
   init_struct.GPIO_OType = GPIO_OType_PP;
-  return init_struct;
+  return &init_struct;
 }
 
 void gpio_init() {
@@ -44,21 +44,21 @@ void gpio_init() {
 }
 
 void gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
-  GPIO_InitTypeDef init_struct = prv_gpio_parse_args(address->pin, settings);
+  GPIO_InitTypeDef *init_struct = prv_parse_args(address->pin, settings);
+
+  // Set the pin state.
+  GPIO_WriteBit(gpio_port_map[address->port], init_struct->GPIO_Pin, settings->state);
 
   // Use the init_struct to set the pin to its defaults.
   GPIO_Init(gpio_port_map[address->port], &init_struct);
-
-  // Set the pin state.
-  GPIO_WriteBit(gpio_port_map[address->port], init_struct.GPIO_Pin, settings->state);
 }
 
 void gpio_set_pin_state(GPIOAddress *address, GPIOState *state) {
-  GPIO_WriteBit(gpio_port_map[address->port], prv_gpio_pin_map(address->pin), *state);
+  GPIO_WriteBit(gpio_port_map[address->port], prv_pin_map(address->pin), *state);
 }
 
 void gpio_toggle_state(GPIOAddress *address) {
-  uint16_t pin = prv_gpio_pin_map(address->pin);
+  uint16_t pin = prv_pin_map(address->pin);
   uint8_t state = GPIO_ReadInputDataBit(gpio_port_map[address->port], pin);
   if (state) {
     GPIO_ResetBits(gpio_port_map[address->port], pin);
@@ -68,5 +68,5 @@ void gpio_toggle_state(GPIOAddress *address) {
 }
 
 GPIOState gpio_get_value(GPIOAddress *address) {
-  return GPIO_ReadInputDataBit(gpio_port_map[address->port], prv_gpio_pin_map(address->pin));
+  return GPIO_ReadInputDataBit(gpio_port_map[address->port], prv_pin_map(address->pin));
 }
