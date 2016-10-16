@@ -36,7 +36,7 @@ static GPIO_InitTypeDef *prv_parse_args(uint8_t pin, GPIOSettings *settings) {
 }
 
 void gpio_init() {
-  for (int i = 0; i < sizeof(gpio_port_map) / sizeof(GPIO_TypeDef); ++i) {
+  for (int i = 0; i < sizeof(gpio_port_map) / sizeof(GPIO_TypeDef); i++) {
     // Sets the pin to a default reset mode.
     // TODO(ckitagawa): determine if this is actually Lowest Power setting.
     GPIO_DeInit(gpio_port_map[i]);
