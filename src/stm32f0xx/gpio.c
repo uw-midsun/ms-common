@@ -63,7 +63,7 @@ void gpio_set_pin_state(GPIOAddress *address, GPIOState *state) {
 
 void gpio_toggle_state(GPIOAddress *address) {
   uint16_t pin = prv_pin_map(address->pin);
-  uint8_t state = GPIO_ReadInputDataBit(gpio_port_map[address->port], pin);
+  uint8_t state = GPIO_ReadOutputDataBit(gpio_port_map[address->port], pin);
   if (state) {
     GPIO_ResetBits(gpio_port_map[address->port], pin);
   } else {
