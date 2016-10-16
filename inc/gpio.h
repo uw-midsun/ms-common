@@ -31,8 +31,8 @@ typedef enum {
 
 // For setting the alternate function on the pin
 typedef enum {
-  GPIO_ALTFN_NONE,
-  GPIO_ALTFN_0 = 0,
+  GPIO_ALTFN_NONE = 0,
+  GPIO_ALTFN_0,
   GPIO_ALTFN_1,
   GPIO_ALTFN_2,
   GPIO_ALTFN_3,
