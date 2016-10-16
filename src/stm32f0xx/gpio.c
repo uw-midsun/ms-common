@@ -32,7 +32,6 @@ void gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
   // These are default values which are not intended to be changed.
   init_struct.GPIO_Speed = GPIO_Speed_Level_1;
   init_struct.GPIO_OType = GPIO_OType_PP;
-  init_struct;
   if (init_struct.GPIO_Mode == GPIO_Mode_AF) {
     GPIO_PinAFConfig(gpio_port_map[address->port], pin, settings->alt_function - 1);
   }
