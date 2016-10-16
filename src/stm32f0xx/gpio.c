@@ -6,6 +6,7 @@
 static GPIO_TypeDef *gpio_port_map[] = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF};
 
 // Map the uint8_t version of the pin to the uint16_t used by the gpio functions.
+// This isn't a linear map hence the switch case.
 static uint16_t prv_gpio_pin_map(uint8_t pin) {
   uint16_t pin_addr;
   assert_param(pin < 16);
