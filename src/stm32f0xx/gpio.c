@@ -24,7 +24,7 @@ static GPIO_InitTypeDef *prv_parse_args(uint8_t pin, GPIOSettings *settings) {
     init_struct.GPIO_Mode = settings->direction;
   } else {
     // Subtract 1 due to the offset of the enum from the ALTFN_NONE entry
-    init_struct.GPIO_Mode = settings->alt_function - 1;
+    init_struct.GPIO_Mode = GPIO_Mode_AF;
   }
   init_struct.GPIO_PuPd = settings->resistor;
   init_struct.GPIO_Pin = prv_pin_map(pin);
@@ -45,6 +45,10 @@ void gpio_init() {
 
 void gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
   GPIO_InitTypeDef *init_struct = prv_parse_args(address->pin, settings);
+  if (init_struct->GPIO_Mode == GPIO_Mode_AF) {
+    GPIO_PinAFConfig(gpio_port_map[address->port], init_struct->GPIO_Pin,
+                     settings->alt_function - 1);
+  }
 
   // Set the pin state.
   GPIO_WriteBit(gpio_port_map[address->port], init_struct->GPIO_Pin, settings->state);
