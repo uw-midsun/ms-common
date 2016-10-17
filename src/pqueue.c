@@ -1,31 +1,33 @@
+// Implements a min-heap.
+// Modified from http://cs.smu.ca/~pawan/teach/csc342/98-99-2/book/chapter9/minheap.h
 #include <stdlib.h>
 #include <string.h>
 #include "pqueue.h"
 
-void pqueue_init(PQueue *queue, PQueueNode *nodes, size_t max_nodes) {
+void pqueue_init(PQueue *queue, PQueueNode *nodes, size_t num_nodes) {
   memset(queue, 0, sizeof(*queue));
 
   queue->nodes = nodes;
-  queue->max_nodes = max_nodes;
+  queue->max_nodes = num_nodes - 1; // 1-indexed heap - throw away one node
 }
 
 bool pqueue_push(PQueue *queue, void *data, uint16_t prio) {
-  if (queue->size + 1 >= queue->max_nodes) {
+  if (queue->size == queue->max_nodes) {
     // Ran out of space - TODO: handle errors better
     return false;
   }
 
-  size_t i = queue->size + 1;
-  size_t j = i / 2;
-  while (i > 1 && queue->nodes[j].prio > prio) {
-    queue->nodes[i] = queue->nodes[j];
-    i = j;
-    j /= 2;
+  // Begin at new leaf, bubble up
+  size_t i = ++queue->size;
+  while (i != 1 && queue->nodes[i / 2].prio > prio) {
+    queue->nodes[i] = queue->nodes[i / 2];
+    i /= 2;
   }
 
   queue->nodes[i].prio = prio;
   queue->nodes[i].data = data;
-  queue->size++;
+
+  return true;
 }
 
 void *pqueue_pop(PQueue *queue) {
@@ -33,27 +35,29 @@ void *pqueue_pop(PQueue *queue) {
     return NULL;
   }
 
+  // Minimum element
   void *data = queue->nodes[1].data;
-  queue->nodes[1] = queue->nodes[queue->size];
-  queue->size--;
 
-  size_t i = 1, j = 0, k = 0;
-  while (true) {
-    k = i;
-    j = 2 * i;
-    if (j <= queue->size && queue->nodes[j].prio < queue->nodes[k].prio) {
-      k = j;
+  // Find place for last element
+  size_t last_elem = queue->size--;
+  size_t i = 1, child = 2;
+  while (child <= queue->size) {
+    // Set child to min(left, right)
+    if (child < queue->size && queue->nodes[child].prio > queue->nodes[child + 1].prio) {
+      child++;
     }
-    if (j + 1 <= queue->size && queue->nodes[j + 1].prio < queue->nodes[k].prio) {
-      k = j + 1;
-    }
-    if (k == i) {
+
+    if (queue->nodes[last_elem].prio <= queue->nodes[child].prio) {
       break;
     }
-    queue->nodes[i] = queue->nodes[k];
-    i = k;
+
+    // Element does not fit - move child up and go down a level
+    queue->nodes[i] = queue->nodes[child];
+    i = child;
+    child *= 2;
   }
-  queue->nodes[i] = queue->nodes[queue->size + 1];
+
+  queue->nodes[i] = queue->nodes[last_elem];
 
   return data;
 }
