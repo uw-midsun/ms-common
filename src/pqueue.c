@@ -8,7 +8,7 @@ void pqueue_init(PQueue *queue, PQueueNode *nodes, size_t num_nodes) {
   memset(queue, 0, sizeof(*queue));
 
   queue->nodes = nodes;
-  queue->max_nodes = num_nodes - 1; // 1-indexed heap - throw away one node
+  queue->max_nodes = num_nodes - 1;  // 1-indexed heap - throw away one node
 }
 
 bool pqueue_push(PQueue *queue, void *data, uint16_t prio) {

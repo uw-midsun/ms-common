@@ -18,8 +18,7 @@ static prv_init_node(void *node) {
 
 void event_queue_init(void) {
   pqueue_init(&queue.queue, queue.queue_nodes, EVENT_QUEUE_SIZE);
-  objpool_init(&queue.pool, queue.event_nodes, EVENT_QUEUE_SIZE,
-               sizeof(queue.event_nodes[0]), prv_init_node);
+  objpool_init(&queue.pool, queue.event_nodes, prv_init_node);
 }
 
 bool event_raise(const Event *e) {
