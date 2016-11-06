@@ -7,44 +7,33 @@
 #include "stm32f0xx_gpio.h"
 #include "stm32f0xx_rcc.h"
 
-static GPIO_TypeDef *gpio_port_map[] = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF};
-static uint32_t gpio_rcc_ahb_timer_map[] = {RCC_AHBPeriph_GPIOA, RCC_AHBPeriph_GPIOB,
-                                            RCC_AHBPeriph_GPIOC, RCC_AHBPeriph_GPIOD,
-                                            RCC_AHBPeriph_GPIOE, RCC_AHBPeriph_GPIOF};
+static GPIO_TypeDef *gpio_port_map[] = { GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF };
+static uint32_t gpio_rcc_ahb_timer_map[] = { RCC_AHBPeriph_GPIOA, RCC_AHBPeriph_GPIOB,
+                                             RCC_AHBPeriph_GPIOC, RCC_AHBPeriph_GPIOD,
+                                             RCC_AHBPeriph_GPIOE, RCC_AHBPeriph_GPIOF };
 
-#define NUM_PINS 16
-#define NUM_PORTS sizeof(gpio_port_map) / sizeof(GPIO_TypeDef)
+#define GPIO_NUM_PINS 16
+#define GPIO_NUM_PORTS 6
 
 // Determines if an GPIOAddress is valid based on the defined number of ports and pins.
-static inline bool prv_is_address_valid(const GPIOAddress *address) {
-  if (address->port >= NUM_PORTS || address->pin >= NUM_PINS) {
-    return false;
-  }
-  return true;
+static bool prv_is_address_valid(const GPIOAddress *address) {
+  return !(address->port >= GPIO_NUM_PORTS || address->pin >= GPIO_NUM_PINS);
 }
 
-// TODO(ckitagawa): Consider moving these two inline functions to the header as they will be used
-// more or less universally between the implementations.
+// TODO(ckitagawa): Consider moving these two functions to the header as they will be used more or
+// less universally between the implementations.
 
 // Determines if a GPIOState is valid based on the enums.
-static inline bool prv_is_state_valid(const GPIOState *state) {
-  if (*state >= NUM_GPIO_STATE) {
-    return false;
-  }
-  return true;
-}
+static bool prv_is_state_valid(const GPIOState *state) { return !(*state >= NUM_GPIO_STATE); }
 
 // Determines if a GPIOSettings is valid based on the enums.
-static inline bool prv_are_settings_valid(const GPIOSettings *settings) {
-  if (settings->direction >= NUM_GPIO_DIR || settings->state >= NUM_GPIO_STATE ||
-      settings->resistor >= NUM_GPIO_RES || settings->alt_function >= NUM_GPIO_ALTFN) {
-    return false;
-  }
-  return true;
+static bool prv_are_settings_valid(const GPIOSettings *settings) {
+  return !(settings->direction >= NUM_GPIO_DIR || settings->state >= NUM_GPIO_STATE ||
+           settings->resistor >= NUM_GPIO_RES || settings->alt_function >= NUM_GPIO_ALTFN);
 }
 
 bool gpio_init() {
-  for (volatile uint32_t i = 0; i < NUM_PORTS; i++) {
+  for (uint32_t i = 0; i < GPIO_NUM_PORTS; i++) {
     // Sets the pin to a default reset mode.
     // TODO(ckitagawa): determine if this is actually Lowest Power setting.
     GPIO_DeInit(gpio_port_map[i]);
@@ -60,7 +49,6 @@ bool gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
   GPIO_InitTypeDef init_struct;
   uint16_t pin = 0x01 << address->pin;
 
-  // The empire did nothing wrong.
   RCC_AHBPeriphClockCmd(gpio_rcc_ahb_timer_map[address->port], ENABLE);
 
   // Parse the GPIOAltFN settings which are used to modify the mode and Alt Function.
@@ -83,7 +71,7 @@ bool gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
   }
 
   // Set the pin state.
-  GPIO_WriteBit(gpio_port_map[address->port], pin, (BitAction)settings->state);
+  gpio_set_pin_state(address, settings->state);
 
   // Use the init_struct to set the pin.
   GPIO_Init(gpio_port_map[address->port], &init_struct);
