@@ -2,24 +2,27 @@
 
 // GPIO HAL Interface
 
+#include <stdbool.h>
 #include <stdint.h>
 
 // GPIO address to be used to change that pin's settings
 typedef struct GPIOAddress {
-  const uint8_t port;
-  const uint8_t pin;
+  uint8_t port;
+  uint8_t pin;
 } GPIOAddress;
 
 // For setting the direction of the pin
 typedef enum {
   GPIO_DIR_IN = 0,
   GPIO_DIR_OUT,
+  NUM_GPIO_DIR,
 } GPIODir;
 
 // For setting the output value of the pin
 typedef enum {
   GPIO_STATE_LOW = 0,
   GPIO_STATE_HIGH,
+  NUM_GPIO_STATE,
 } GPIOState;
 
 // For setting the internal pull-up/pull-down resistor
@@ -27,6 +30,7 @@ typedef enum {
   GPIO_RES_NONE = 0,
   GPIO_RES_PULLUP,
   GPIO_RES_PULLDOWN,
+  NUM_GPIO_RES,
 } GPIORes;
 
 // For setting the alternate function on the pin
@@ -41,6 +45,7 @@ typedef enum {
   GPIO_ALTFN_6,
   GPIO_ALTFN_7,
   GPIO_ALTFN_ANALOG,
+  NUM_GPIO_ALTFN,
 } GPIOAltFn;
 
 // GPIO settings for setting the value of a pin
@@ -51,17 +56,20 @@ typedef struct GPIOSettings {
   GPIOAltFn alt_function;
 } GPIOSettings;
 
-// Initializes GPIO globally, sets all pins to lowest power mode
-void gpio_init();
+// All the following functions return true if the operation was successful and false otherwise.
 
-// Initializes a GPIO pin
-void gpio_init_pin(GPIOAddress *address, GPIOSettings *settings);
+// Initializes GPIO globally by setting all pins to their default state. ONLY CALL ONCE or it will
+// deinit all current settings. Change setting by calling gpio_init_pin.
+bool gpio_init();
 
-// Set the pin state by address
-void gpio_set_pin_state(GPIOAddress *address, GPIOState *state);
+// Initializes a GPIO pin by address.
+bool gpio_init_pin(GPIOAddress *address, GPIOSettings *settings);
 
-// Toggles the output state of the pin
-void gpio_toggle_state(GPIOAddress *address);
+// Set the pin state by address.
+bool gpio_set_pin_state(GPIOAddress *address, GPIOState state);
 
-// Gets the value of the input register for a pin
-GPIOState gpio_get_value(GPIOAddress *address);
+// Toggles the output state of the pin.
+bool gpio_toggle_state(GPIOAddress *address);
+
+// Gets the value of the input register for a pin and assigns it to the state that is passed in.
+bool gpio_get_value(GPIOAddress *address, GPIOState *input_state);
