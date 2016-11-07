@@ -12,12 +12,12 @@ void teardown_test(void) {}
 
 // Tests that the GPIO init works. This should simply return true 100% of time unless the test is on
 // x86 and the configuration is incorrect in which case fix it!
-void test_gpio_valid_init(void) { TEST_ASSERT_TRUE(gpio_init()); }
+void test_gpio_init_valid(void) { TEST_ASSERT_TRUE(gpio_init()); }
 
 // gpio_init_pin
 
 // Test that a valid gpio configuration will work.
-void test_gpio_valid_init_pin(void) {
+void test_gpio_init_pin_valid(void) {
   // Default settings for a pin.
   GPIOSettings settings = {.direction = GPIO_DIR_IN,
                            .state = GPIO_STATE_LOW,
@@ -30,7 +30,7 @@ void test_gpio_valid_init_pin(void) {
 }
 
 // Tests a set of addresses far outside normal range.
-void test_gpio_invalid_address_init_pin(void) {
+void test_gpio_init_pin_invalid_address(void) {
   // Default settings for a pin.
   GPIOSettings settings = {.direction = GPIO_DIR_IN,
                            .state = GPIO_STATE_LOW,
@@ -47,7 +47,7 @@ void test_gpio_invalid_address_init_pin(void) {
 }
 
 // Tests a set of settings outside normal range.
-void test_gpio_invalid_settings_init_pin(void) {
+void test_gpio_init_pin_invalid_settings(void) {
   // Bad settings for a pin.
   GPIOSettings settings = {.direction = NUM_GPIO_DIR,
                            .state = GPIO_STATE_LOW,
@@ -70,7 +70,7 @@ void test_gpio_invalid_settings_init_pin(void) {
 
 // Tests that if the pin is set to direction out a high state will be picked up in the input
 // register.
-void test_gpio_valid_output_init_pin(void) {
+void test_gpio_init_pin_valid_output(void) {
   // Default high settings for a pin.
   GPIOSettings settings = {.direction = GPIO_DIR_IN,
                            .state = GPIO_STATE_HIGH,
@@ -96,7 +96,7 @@ void test_gpio_valid_output_init_pin(void) {
 // gpio_set_pin_state
 
 // Test that a valid state change will work.
-void test_gpio_valid_set_pin_state(void) {
+void test_gpio_set_pin_state_valid(void) {
   // Default output settings for a pin.
   GPIOSettings settings = {.direction = GPIO_DIR_OUT,
                            .state = GPIO_STATE_LOW,
@@ -120,7 +120,7 @@ void test_gpio_valid_set_pin_state(void) {
 }
 
 // Test that an invalid address is caught.
-void test_gpio_invalid_address_set_pin_state(void) {
+void test_gpio_set_pin_state_invalid_address(void) {
   TEST_ASSERT_TRUE(gpio_init());
   // A port that should be invalid on all configurations.
   GPIOAddress address = {.port = 100, .pin = 0 };
@@ -132,10 +132,10 @@ void test_gpio_invalid_address_set_pin_state(void) {
 }
 
 // Test that an invalid state is caught.
-void test_gpio_invalid_state_set_pin_state(void) {
+void test_gpio_set_pin_state_invalid_state(void) {
   TEST_ASSERT_TRUE(gpio_init());
   // A port that should be valid on all configurations.
-  GPIOAddress address = { 0, 0 };
+  GPIOAddress address = {.port = 0, .pin = 0 };
   TEST_ASSERT_FALSE(gpio_set_pin_state(&address, NUM_GPIO_STATE));
   TEST_ASSERT_FALSE(gpio_set_pin_state(&address, -1));
 }
@@ -143,7 +143,7 @@ void test_gpio_invalid_state_set_pin_state(void) {
 // gpio_toggle_state
 
 // Test that a valid state toggle will work.
-void test_gpio_valid_toggle_state(void) {
+void test_gpio_toggle_state_valid(void) {
   // Default output settings for a pin.
   GPIOSettings settings = {.direction = GPIO_DIR_OUT,
                            .state = GPIO_STATE_LOW,
@@ -167,7 +167,7 @@ void test_gpio_valid_toggle_state(void) {
 }
 
 // Test that an invalid address is caught.
-void test_gpio_invalid_address_toggle_state(void) {
+void test_gpio_toggle_state_invalid_address(void) {
   TEST_ASSERT_TRUE(gpio_init());
   // A port that should be invalid on all configurations.
   GPIOAddress address = {.port = 100, .pin = 0 };
@@ -182,7 +182,7 @@ void test_gpio_invalid_address_toggle_state(void) {
 
 // Test that a valid get value will work. This doubles as a test to verify that the state setting on
 // gpio_init_pin works.
-void test_gpio_valid_get_value(void) {
+void test_gpio_get_value_valid(void) {
   // Default output settings for a pin.
   GPIOSettings settings = {.direction = GPIO_DIR_OUT,
                            .state = GPIO_STATE_LOW,
@@ -204,7 +204,7 @@ void test_gpio_valid_get_value(void) {
 }
 
 // Test that an invalid address is caught.
-void test_gpio_invalid_address_get_value(void) {
+void test_gpio_get_value_invalid_address(void) {
   TEST_ASSERT_TRUE(gpio_init());
   // A port that should be invalid on all configurations.
   GPIOAddress address = {.port = 100, .pin = 0 };

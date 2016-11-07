@@ -24,7 +24,9 @@ static bool prv_is_address_valid(const GPIOAddress *address) {
 // less universally between the implementations.
 
 // Determines if a GPIOState is valid based on the enums.
-static bool prv_is_state_valid(const GPIOState *state) { return !(*state >= NUM_GPIO_STATE); }
+static bool prv_is_state_valid(const GPIOState *state) {
+  return *state < NUM_GPIO_STATE;
+}
 
 // Determines if a GPIOSettings is valid based on the enums.
 static bool prv_are_settings_valid(const GPIOSettings *settings) {
