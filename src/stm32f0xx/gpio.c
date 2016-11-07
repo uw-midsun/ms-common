@@ -20,7 +20,7 @@ static bool prv_is_address_valid(const GPIOAddress *address) {
   return !(address->port >= GPIO_NUM_PORTS || address->pin >= GPIO_NUM_PINS);
 }
 
-// TODO(ckitagawa): Consider moving these two functions to the header as they will be used more or
+// TODO(ELEC-20): Consider moving these two functions to the header as they will be used more or
 // less universally between the implementations.
 
 // Determines if a GPIOState is valid based on the enums.
@@ -37,7 +37,7 @@ static bool prv_are_settings_valid(const GPIOSettings *settings) {
 bool gpio_init() {
   for (uint32_t i = 0; i < GPIO_NUM_PORTS; i++) {
     // Sets the pin to a default reset mode.
-    // TODO(ckitagawa): determine if this is actually Lowest Power setting.
+    // TODO(ELEC-20): determine if this is actually Lowest Power setting.
     GPIO_DeInit(gpio_port_map[i]);
   }
   return true;

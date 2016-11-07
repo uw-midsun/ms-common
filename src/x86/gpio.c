@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// TODO(ckitagawa): Move this to a configuration file which is included in the x86 shared header.
+// TODO(ELEC-39): Move this to a configuration file which is included in the x86 shared header.
 #define MAX_PORTS 6
 #define MAX_PINS 16
 
@@ -31,7 +31,7 @@ static uint32_t prv_get_index(GPIOAddress *address) {
 }
 
 bool gpio_init() {
-  // TODO(ckitagawa): Check if MAX_PORTS and MAX_PINS get defined if not fail as the configuration
+  // TODO(ELEC-39): Check if MAX_PORTS and MAX_PINS get defined if not fail as the configuration
   // is bad.
   GPIOSettings default_settings = {.direction = GPIO_DIR_IN,
                                    .state = GPIO_STATE_LOW,
