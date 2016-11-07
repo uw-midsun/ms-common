@@ -1,7 +1,6 @@
-#include "gpio.h"
-
 #include <stdint.h>
 
+#include "gpio.h"
 #include "unity.h"
 
 void setup_test(void) {}
@@ -12,7 +11,9 @@ void teardown_test(void) {}
 
 // Tests that the GPIO init works. This should simply return true 100% of time unless the test is on
 // x86 and the configuration is incorrect in which case fix it!
-void test_gpio_init_valid(void) { TEST_ASSERT_TRUE(gpio_init()); }
+void test_gpio_init_valid(void) {
+  TEST_ASSERT_TRUE(gpio_init());
+}
 
 // gpio_init_pin
 
@@ -91,7 +92,7 @@ void test_gpio_init_pin_valid_output(void) {
   TEST_ASSERT_EQUAL(GPIO_STATE_HIGH, state);
 }
 
-// TODO(ckitagawa): Figure out how to verify: PUPDR, ALTFN.
+// TODO(ELEC-32): Figure out how to verify: PUPDR, ALTFN.
 
 // gpio_set_pin_state
 
