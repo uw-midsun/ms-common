@@ -1,3 +1,5 @@
+// Event queue uses a priority heap and object pool under the hood.
+// Currently, there is only one global event queue.
 #include "event_queue.h"
 #include "pqueue.h"
 #include "objpool.h"
@@ -5,7 +7,7 @@
 typedef struct EventQueue {
   ObjectPool pool;
   PQueue queue;
-  PQueueNode queue_nodes[EVENT_QUEUE_SIZE];
+  PQueueNode queue_nodes[EVENT_QUEUE_SIZE + 1];
   Event event_nodes[EVENT_QUEUE_SIZE];
 } EventQueue;
 
@@ -17,7 +19,7 @@ static prv_init_node(void *node) {
 }
 
 void event_queue_init(void) {
-  pqueue_init(&queue.queue, queue.queue_nodes, EVENT_QUEUE_SIZE);
+  pqueue_init(&queue.queue, queue.queue_nodes, SIZEOF_ARRAY(queue.queue_nodes));
   objpool_init(&queue.pool, queue.event_nodes, prv_init_node);
 }
 

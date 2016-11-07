@@ -1,7 +1,7 @@
 #pragma once
 // Object Pool Interface
 // Manages a pre-allocated array of objects. We use this instead of a heap so we don't need to deal
-// with memory fragmentation.
+// with memory fragmentation. Use designated initializers to prevent losing object marker information.
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -12,8 +12,8 @@ typedef void (*objpool_node_init_fn)(void *node);
 
 // All nodes compatible with object pools should begin with an object marker
 typedef struct ObjectMarker {
-  uint8_t signature;
-  bool free;
+  bool free:1;
+  uint16_t index:15;
 } ObjectMarker;
 
 typedef struct ObjectPool {
@@ -34,4 +34,4 @@ void objpool_init_verbose(ObjectPool *pool, void *nodes, size_t num_nodes,
 void *objpool_get_node(ObjectPool *pool);
 
 // Releases the specified node
-void objpool_free_node(ObjectPool *pool, void *node);
+bool objpool_free_node(ObjectPool *pool, void *node);

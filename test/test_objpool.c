@@ -28,6 +28,7 @@ void test_objpool_multi(void) {
 
   for (int i = 0; i < TEST_OBJPOOL_SIZE; i++) {
     nodes[i] = objpool_get_node(&gv_pool);
+    TEST_ASSERT_NOT_NULL(nodes[i]);
     nodes[i]->data = i;
   }
 
@@ -52,6 +53,7 @@ void test_objpool_too_many(void) {
 
   for (int i = 0; i < TEST_OBJPOOL_SIZE; i++) {
     nodes[i] = objpool_get_node(&gv_pool);
+    TEST_ASSERT_NOT_NULL(nodes[i]);
     nodes[i]->data = i;
   }
 
@@ -64,10 +66,10 @@ void test_objpool_too_many(void) {
 
 void test_objpool_invalid_free(void) {
   // Expect this not to segfault
-  objpool_free_node(&gv_pool, NULL);
+  TEST_ASSERT_FALSE(objpool_free_node(&gv_pool, NULL));
 
   // Purposely access out of bounds memory
-  objpool_free_node(&gv_pool, &gv_nodes[TEST_OBJPOOL_SIZE]);
+  TEST_ASSERT_FALSE(objpool_free_node(&gv_pool, &gv_nodes[TEST_OBJPOOL_SIZE]));
 }
 
 void test_objpool_free_other_pool(void) {
@@ -77,11 +79,25 @@ void test_objpool_free_other_pool(void) {
   objpool_init(&pool, nodes, NULL);
 
   TestObject *node = objpool_get_node(&pool);
-  node->data = 0x1234;
   TEST_ASSERT_NOT_NULL(node);
+  node->data = 0x1234;
 
-  // Invalid operation - should fail silently
-  objpool_free_node(&gv_pool, node);
+  // Invalid operation
+  TEST_ASSERT_FALSE(objpool_free_node(&gv_pool, node));
 
   TEST_ASSERT_EQUAL(0x1234, node->data);
+}
+
+void test_objpool_copy_free(void) {
+  TestObject data = {
+    .data = 0x1234
+  };
+
+  // Copy the data from the stack object. This will result in an invalid marker.
+  TestObject *node = objpool_get_node(&gv_pool);
+  TEST_ASSERT_NOT_NULL(node);
+  *node = data;
+
+  // We should still be able to free the node if this happens.
+  TEST_ASSERT_TRUE(objpool_free_node(&gv_pool, node));
 }
