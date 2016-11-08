@@ -2,7 +2,7 @@
 // Object Pool Interface
 //
 // Manages a pre-allocated array of objects. We use this instead of a heap so we don't need to deal
-// with memory fragmentation. Use designated initializers to prevent losing object marker information.
+// with memory fragmentation. Use designated initializers to prevent losing marker information.
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
