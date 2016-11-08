@@ -24,7 +24,6 @@
 // }
 //
 // Use fsm_state_init to set a state's output function (called whenever transitioned to).
-
 #include <stdbool.h>
 #include <stdint.h>
 #include "event_queue.h"

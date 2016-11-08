@@ -1,10 +1,11 @@
 #pragma once
 // Object Pool Interface
+//
 // Manages a pre-allocated array of objects. We use this instead of a heap so we don't need to deal
 // with memory fragmentation. Use designated initializers to prevent losing object marker information.
-#include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "misc.h"
 
 // Function to initialize nodes with

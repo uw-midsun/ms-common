@@ -1,6 +1,9 @@
 #pragma once
-#include <stdint.h>
+// Global event queue
+//
+// Uses a minimum priority queue to prioritize events of lower ID. Only one instance exists.
 #include <stdbool.h>
+#include <stdint.h>
 #include "objpool.h"
 
 #define EVENT_QUEUE_SIZE 20

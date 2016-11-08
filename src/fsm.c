@@ -1,5 +1,4 @@
 #include "fsm.h"
-#include <stdbool.h>
 
 void fsm_init(FSM *fsm, const char *name, State *default_state) {
   fsm->name = name;

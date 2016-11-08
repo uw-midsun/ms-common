@@ -1,7 +1,7 @@
 #pragma once
-// Generic priority queue
-#include <stdint.h>
+// Generic minimum priority queue
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 typedef struct PQueueNode {

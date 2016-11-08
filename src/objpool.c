@@ -1,7 +1,6 @@
 // The object pool uses a flag and index to verify a given node and determine its state.
 // We currently use a bitfield to maximize the index limit.
 #include <string.h>
-#include <stdio.h>
 #include "objpool.h"
 
 #define OBJPOOL_GET(pool, index) \
