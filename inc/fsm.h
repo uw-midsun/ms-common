@@ -1,8 +1,8 @@
 #pragma once
 // FSM Interface
 //
-// For every event that is processed (i.e results in a transition), the new state's output is
-// called.
+// For every event that is processed (i.e. results in a transition), the new state's
+// output function is called.
 //
 // The FSM keeps track of both current and last states for debug purposes. It would be trivial to
 // additionally track the last processed event.
@@ -24,7 +24,6 @@
 // }
 //
 // Use fsm_state_init to set a state's output function (called whenever transitioned to).
-
 #include <stdbool.h>
 #include <stdint.h>
 #include "event_queue.h"

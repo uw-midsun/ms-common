@@ -1,7 +1,5 @@
 #pragma once
-
 // GPIO HAL Interface
-
 #include <stdbool.h>
 #include <stdint.h>
 
