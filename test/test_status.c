@@ -12,7 +12,7 @@ void teardown_test(void) {}
 // Verifies a few common use cases work.
 void test_status_create_valid(void) {
   // Most common use case
-  Status status = status(STATUS_CODE_UNIMPLEMENTED);
+  Status status = status_new(STATUS_CODE_UNIMPLEMENTED);
   TEST_ASSERT_EQUAL(STATUS_CODE_UNIMPLEMENTED, status.code);
   TEST_ASSERT_EQUAL_STRING("", status.message);
 
@@ -42,9 +42,9 @@ void test_status_create_invalid_args(void) {
 
 // Verifies the status ok macro works.
 void test_status_ok_macro(void) {
-  Status status = status(STATUS_CODE_OK);
+  Status status = status_new(STATUS_CODE_OK);
   TEST_ASSERT_TRUE(status_ok(status));
 
-  status = status(STATUS_CODE_TIMEOUT);
+  status = status_new(STATUS_CODE_TIMEOUT);
   TEST_ASSERT_FALSE(status_ok(status));
 }

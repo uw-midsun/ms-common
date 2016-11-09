@@ -28,7 +28,7 @@ typedef struct Status {
 Status status_create(const StatusCode code, char* message, const int length);
 
 // A macro for returning with just an error code.
-#define status(code) status_create(code, "", 0)
+#define status_new(code) status_create(code, "", 0)
 
 // A cleaner way to define a status with a message.
 #define status_msg(code, message) status_create(code, message, strlen(message))

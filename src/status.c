@@ -2,8 +2,6 @@
 
 #include <string.h>
 
-#include "misc.h"
-
 Status status_create(const StatusCode code, char* message, const int length) {
   if (code >= NUM_STATUS_CODE) {
     return status_msg(STATUS_CODE_INVALID_ARGS, "code invalid");
