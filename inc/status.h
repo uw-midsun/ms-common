@@ -28,8 +28,8 @@ typedef struct Status {
 // called via the macros.
 bool prv_status_create(const StatusCode code, const char* caller, const char* message);
 
-// Get a pointer to the global status so it can be used.
-Status* status_get();
+// Get a copy of the global status so it can be used safely.
+Status status_get();
 
 // Macros for convenience.
 #define status_new(code) prv_status_create(code, __FUNCTION__, "")

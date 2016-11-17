@@ -19,8 +19,8 @@ bool prv_status_create(const StatusCode code, const char* caller, const char* me
   return false;
 }
 
-Status* status_get() {
-  return &global_status;
+Status status_get() {
+  return global_status;
 }
 
 bool status_ok() {
