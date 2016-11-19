@@ -1,7 +1,7 @@
 #pragma once
 // Status Library for more verbose error handling
-#include <stdbool.h>
-#include <stdint.h>
+
+#include "misc.h"
 
 // StatusCodes for various errors, keep these generic. Never assume their order is fixed so refer to
 // them by name only.
@@ -20,21 +20,25 @@ typedef enum {
 
 typedef struct Status {
   StatusCode code;
+  const char* source;
   const char* caller;
   const char* message;
 } Status;
 
-// Creates a status struct containing an error code and optionally a message. This should only be
+// Updates a status struct containing an error code and optionally a message. This should only be
 // called via the macros.
-bool prv_status_create(const StatusCode code, const char* caller, const char* message);
+StatusCode status_impl_update(const StatusCode code, const char* source, const char* caller,
+                              const char* message);
 
 // Get a copy of the global status so it can be used safely.
 Status status_get();
 
 // Macros for convenience.
-#define status_new(code) prv_status_create(code, __FUNCTION__, "")
-#define status_msg(code, message) prv_status_create(code, __FUNCTION__, message)
+#define status_code(code) \
+  status_impl_update((code), (__FILE__ ":" STRINGANIZE(__LINE__)), (__FUNCTION__), (""))
+#define status_msg(code, message) \
+  status_impl_update((code), (__FILE__ ":" STRINGANIZE(__LINE__)), (__FUNCTION__), (message))
 
 // Use to forward failures or continue on success.
-#define status_ok_or_return(ok) \
-  if (!ok) return false
+#define status_ok_or_return(code) \
+  if (code) return code
