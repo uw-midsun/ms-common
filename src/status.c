@@ -1,6 +1,6 @@
 #include "status.h"
 
-static Status s_global_status = {.source = "", .caller = "", .message = "" };
+static Status s_global_status = { .source = "", .caller = "", .message = "" };
 
 StatusCode status_impl_update(const StatusCode code, const char* source, const char* caller,
                               const char* message) {
