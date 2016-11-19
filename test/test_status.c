@@ -63,5 +63,5 @@ void test_status_ok_or_return(void) {
   TEST_ASSERT_EQUAL_STRING("prv_ok_or_return", status.caller);
   TEST_ASSERT_EQUAL_STRING("This should work.", status.message);
   // THIS LINE IS SUPER EASY TO BREAK IF ANYTHING CHANGES ABOVE.
-  TEST_ASSERT_EQUAL_STRING(__FILE__ ":" STRINGANIZE(55), status.source);
+  TEST_ASSERT_EQUAL_STRING(__FILE__ ":" STRINGIFY(55), status.source);
 }

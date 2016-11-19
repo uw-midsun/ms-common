@@ -35,9 +35,9 @@ Status status_get();
 
 // Macros for convenience.
 #define status_code(code) \
-  status_impl_update((code), (__FILE__ ":" STRINGANIZE(__LINE__)), (__FUNCTION__), (""))
+  status_impl_update((code), (__FILE__ ":" STRINGIFY(__LINE__)), (__FUNCTION__), (""))
 #define status_msg(code, message) \
-  status_impl_update((code), (__FILE__ ":" STRINGANIZE(__LINE__)), (__FUNCTION__), (message))
+  status_impl_update((code), (__FILE__ ":" STRINGIFY(__LINE__)), (__FUNCTION__), (message))
 
 // Use to forward failures or continue on success.
 #define status_ok_or_return(code) \
