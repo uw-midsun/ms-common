@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "status.h"
+
 // TODO(ELEC-39): Move this to a configuration file which is included in the x86 shared header.
 #define MAX_PORTS 6
 #define MAX_PINS 16
@@ -30,10 +32,10 @@ static uint32_t prv_get_index(GPIOAddress *address) {
   return address->port * MAX_PORTS + address->pin;
 }
 
-bool gpio_init() {
+StatusCode gpio_init() {
   // TODO(ELEC-39): Check if MAX_PORTS and MAX_PINS get defined if not fail as the configuration
   // is bad.
-  GPIOSettings default_settings = {.direction = GPIO_DIR_IN,
+  GPIOSettings default_settings = { .direction = GPIO_DIR_IN,
                                    .state = GPIO_STATE_LOW,
                                    .resistor = GPIO_RES_NONE,
                                    .alt_function = GPIO_ALTFN_NONE };
@@ -41,30 +43,30 @@ bool gpio_init() {
     pin_settings[i] = default_settings;
     gpio_pin_input_value[i] = 0;
   }
-  return true;
+  return status_code(STATUS_CODE_OK);
 }
 
-bool gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
+StatusCode gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
   if (!prv_is_address_valid(address) || !prv_are_settings_valid(settings)) {
-    return false;
+    return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   pin_settings[prv_get_index(address)] = *settings;
-  return true;
+  return status_code(STATUS_CODE_OK);
 }
 
-bool gpio_set_pin_state(GPIOAddress *address, GPIOState state) {
+StatusCode gpio_set_pin_state(GPIOAddress *address, GPIOState state) {
   if (!prv_is_address_valid(address) || !prv_is_state_valid(&state)) {
-    return false;
+    return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   pin_settings[prv_get_index(address)].state = state;
-  return true;
+  return STATUS_CODE_OK;
 }
 
-bool gpio_toggle_state(GPIOAddress *address) {
+StatusCode gpio_toggle_state(GPIOAddress *address) {
   if (!prv_is_address_valid(address)) {
-    return false;
+    return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   uint32_t index = prv_get_index(address);
@@ -73,12 +75,12 @@ bool gpio_toggle_state(GPIOAddress *address) {
   } else {
     pin_settings[index].state = GPIO_STATE_LOW;
   }
-  return true;
+  return status_code(STATUS_CODE_OK);
 }
 
-bool gpio_get_value(GPIOAddress *address, GPIOState *state) {
+StatusCode gpio_get_value(GPIOAddress *address, GPIOState *state) {
   if (!prv_is_address_valid(address)) {
-    return false;
+    return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   uint32_t index = prv_get_index(address);
@@ -89,5 +91,5 @@ bool gpio_get_value(GPIOAddress *address, GPIOState *state) {
   } else {
     *state = gpio_pin_input_value[index];
   }
-  return true;
+  return status_code(STATUS_CODE_OK);
 }

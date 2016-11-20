@@ -1,13 +1,16 @@
 // The object pool uses a flag and index to verify a given node and determine its state.
 // We currently use a bitfield to maximize the index limit.
+#include <stdbool.h>
 #include <string.h>
+
 #include "objpool.h"
+#include "status.h"
 
 #define OBJPOOL_GET(pool, index) \
   ((ObjectMarker *)((uintptr_t)(pool)->nodes + ((index) * (pool)->node_size)))
 
-void objpool_init_verbose(ObjectPool *pool, void *nodes, size_t num_nodes,
-                          size_t node_size, objpool_node_init_fn init_node) {
+void objpool_init_verbose(ObjectPool *pool, void *nodes, size_t num_nodes, size_t node_size,
+                          objpool_node_init_fn init_node) {
   memset(pool, 0, sizeof(*pool));
 
   pool->nodes = nodes;
@@ -35,12 +38,12 @@ void *objpool_get_node(ObjectPool *pool) {
   return NULL;
 }
 
-bool objpool_free_node(ObjectPool *pool, void *node) {
+StatusCode objpool_free_node(ObjectPool *pool, void *node) {
   ObjectMarker *marker = node;
 
   if (marker == NULL || marker->index >= pool->num_nodes ||
       marker != OBJPOOL_GET(pool, marker->index)) {
-    return false;
+    return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   uint16_t index = marker->index;
@@ -52,5 +55,5 @@ bool objpool_free_node(ObjectPool *pool, void *node) {
   marker->index = index;
   marker->free = true;
 
-  return true;
+  return status_code(STATUS_CODE_OK);
 }

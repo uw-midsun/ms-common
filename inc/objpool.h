@@ -6,15 +6,17 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+
 #include "misc.h"
+#include "status.h"
 
 // Function to initialize nodes with
 typedef void (*objpool_node_init_fn)(void *node);
 
 // All nodes compatible with object pools should begin with an object marker
 typedef struct ObjectMarker {
-  bool free:1;
-  uint16_t index:15;
+  bool free : 1;
+  uint16_t index : 15;
 } ObjectMarker;
 
 typedef struct ObjectPool {
@@ -28,11 +30,11 @@ typedef struct ObjectPool {
 #define objpool_init(pool, nodes, init_fn) \
   objpool_init_verbose(pool, nodes, SIZEOF_ARRAY(nodes), sizeof(nodes[0]), init_fn)
 
-void objpool_init_verbose(ObjectPool *pool, void *nodes, size_t num_nodes,
-                          size_t node_size, objpool_node_init_fn init_node);
+void objpool_init_verbose(ObjectPool *pool, void *nodes, size_t num_nodes, size_t node_size,
+                          objpool_node_init_fn init_node);
 
 // Returns the pointer to an object from the pool.
 void *objpool_get_node(ObjectPool *pool);
 
 // Releases the specified node
-bool objpool_free_node(ObjectPool *pool, void *node);
+StatusCode objpool_free_node(ObjectPool *pool, void *node);

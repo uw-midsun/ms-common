@@ -39,6 +39,8 @@ Status status_get();
 #define status_msg(code, message) \
   status_impl_update((code), (__FILE__ ":" STRINGIFY(__LINE__)), (__FUNCTION__), (message))
 
+#define status_ok(code) STATUS_CODE_OK == (code)
+
 // Use to forward failures or continue on success.
 #define status_ok_or_return(code) \
   if (code) return code

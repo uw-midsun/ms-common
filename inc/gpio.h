@@ -1,7 +1,8 @@
 #pragma once
 // GPIO HAL Interface
-#include <stdbool.h>
 #include <stdint.h>
+
+#include "status.h"
 
 // GPIO address to be used to change that pin's settings
 typedef struct GPIOAddress {
@@ -58,16 +59,16 @@ typedef struct GPIOSettings {
 
 // Initializes GPIO globally by setting all pins to their default state. ONLY CALL ONCE or it will
 // deinit all current settings. Change setting by calling gpio_init_pin.
-bool gpio_init();
+StatusCode gpio_init();
 
 // Initializes a GPIO pin by address.
-bool gpio_init_pin(GPIOAddress *address, GPIOSettings *settings);
+StatusCode gpio_init_pin(GPIOAddress *address, GPIOSettings *settings);
 
 // Set the pin state by address.
-bool gpio_set_pin_state(GPIOAddress *address, GPIOState state);
+StatusCode gpio_set_pin_state(GPIOAddress *address, GPIOState state);
 
 // Toggles the output state of the pin.
-bool gpio_toggle_state(GPIOAddress *address);
+StatusCode gpio_toggle_state(GPIOAddress *address);
 
 // Gets the value of the input register for a pin and assigns it to the state that is passed in.
-bool gpio_get_value(GPIOAddress *address, GPIOState *input_state);
+StatusCode gpio_get_value(GPIOAddress *address, GPIOState *input_state);
