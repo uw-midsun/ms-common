@@ -56,6 +56,7 @@ static StatusCode prv_ok_or_return() {
   return status_code(STATUS_CODE_UNKNOWN);
 }
 
+// Tests the ok_or_return macro
 void test_status_ok_or_return(void) {
   StatusCode ok = prv_ok_or_return();
   Status status = status_get();
@@ -64,4 +65,14 @@ void test_status_ok_or_return(void) {
   TEST_ASSERT_EQUAL_STRING("This should work.", status.message);
   // THIS LINE IS SUPER EASY TO BREAK IF ANYTHING CHANGES ABOVE.
   TEST_ASSERT_EQUAL_STRING(__FILE__ ":" STRINGIFY(55), status.source);
+}
+
+void test_status_clear(void) {
+  StatusCode ok = status_code(STATUS_CODE_UNIMPLEMENTED);
+  status_clear();
+  Status status = status_get();
+  TEST_ASSERT_EQUAL(STATUS_CODE_OK, status.code);
+  TEST_ASSERT_EQUAL_STRING("", status.caller);
+  TEST_ASSERT_EQUAL_STRING("", status.message);
+  TEST_ASSERT_EQUAL_STRING("", status.source);
 }

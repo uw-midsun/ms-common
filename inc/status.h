@@ -33,12 +33,14 @@ StatusCode status_impl_update(const StatusCode code, const char* source, const c
 // Get a copy of the global status so it can be used safely.
 Status status_get();
 
+// Clears the global status.
+void status_clear();
+
 // Macros for convenience.
 #define status_code(code) \
   status_impl_update((code), (__FILE__ ":" STRINGIFY(__LINE__)), (__FUNCTION__), (""))
 #define status_msg(code, message) \
   status_impl_update((code), (__FILE__ ":" STRINGIFY(__LINE__)), (__FUNCTION__), (message))
-
 #define status_ok(code) (STATUS_CODE_OK == (code))
 
 // Use to forward failures or continue on success.
