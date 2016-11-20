@@ -72,7 +72,6 @@ void test_status_clear(void) {
   status_clear();
   Status status = status_get();
   TEST_ASSERT_EQUAL(STATUS_CODE_OK, status.code);
-  TEST_ASSERT_EQUAL_STRING("", status.caller);
-  TEST_ASSERT_EQUAL_STRING("", status.message);
-  TEST_ASSERT_EQUAL_STRING("", status.source);
+  TEST_ASSERT_EQUAL_STRING("test_status_clear", status.caller);
+  TEST_ASSERT_EQUAL_STRING("Clear", status.message);
 }

@@ -14,10 +14,3 @@ StatusCode status_impl_update(const StatusCode code, const char* source, const c
 Status status_get() {
   return s_global_status;
 }
-
-void status_clear() {
-	s_global_status.code = STATUS_CODE_OK;
-	s_global_status.source = "";
-	s_global_status.caller = "";
-	s_global_status.message = "";
-}
