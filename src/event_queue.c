@@ -36,7 +36,7 @@ StatusCode event_raise(const Event *e) {
   *node = *e;
   pqueue_push(&queue.queue, node, node->id);
 
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }
 
 StatusCode event_process(Event *e) {
@@ -48,5 +48,5 @@ StatusCode event_process(Event *e) {
   *e = *node;
   objpool_free_node(&queue.pool, node);
 
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }

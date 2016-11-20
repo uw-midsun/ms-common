@@ -15,8 +15,8 @@ typedef void (*objpool_node_init_fn)(void *node);
 
 // All nodes compatible with object pools should begin with an object marker
 typedef struct ObjectMarker {
-  bool free : 1;
-  uint16_t index : 15;
+  bool free:1;
+  uint16_t index:15;
 } ObjectMarker;
 
 typedef struct ObjectPool {

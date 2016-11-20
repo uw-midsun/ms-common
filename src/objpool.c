@@ -55,5 +55,5 @@ StatusCode objpool_free_node(ObjectPool *pool, void *node) {
   marker->index = index;
   marker->free = true;
 
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }

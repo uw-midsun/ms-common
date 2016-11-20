@@ -43,7 +43,7 @@ StatusCode gpio_init() {
     pin_settings[i] = default_settings;
     gpio_pin_input_value[i] = 0;
   }
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }
 
 StatusCode gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
@@ -52,7 +52,7 @@ StatusCode gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
   }
 
   pin_settings[prv_get_index(address)] = *settings;
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }
 
 StatusCode gpio_set_pin_state(GPIOAddress *address, GPIOState state) {
@@ -75,7 +75,7 @@ StatusCode gpio_toggle_state(GPIOAddress *address) {
   } else {
     pin_settings[index].state = GPIO_STATE_LOW;
   }
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }
 
 StatusCode gpio_get_value(GPIOAddress *address, GPIOState *state) {
@@ -91,5 +91,5 @@ StatusCode gpio_get_value(GPIOAddress *address, GPIOState *state) {
   } else {
     *state = gpio_pin_input_value[index];
   }
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }

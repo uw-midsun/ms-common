@@ -29,7 +29,7 @@ StatusCode pqueue_push(PQueue *queue, void *data, uint16_t prio) {
   queue->nodes[i].prio = prio;
   queue->nodes[i].data = data;
 
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }
 
 void *pqueue_pop(PQueue *queue) {

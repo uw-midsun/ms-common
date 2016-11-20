@@ -41,7 +41,7 @@ StatusCode gpio_init() {
     // TODO(ELEC-20): determine if this is actually Lowest Power setting.
     GPIO_DeInit(gpio_port_map[i]);
   }
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }
 
 StatusCode gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
@@ -78,7 +78,7 @@ StatusCode gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
 
   // Use the init_struct to set the pin.
   GPIO_Init(gpio_port_map[address->port], &init_struct);
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }
 
 StatusCode gpio_set_pin_state(GPIOAddress *address, GPIOState state) {
@@ -87,7 +87,7 @@ StatusCode gpio_set_pin_state(GPIOAddress *address, GPIOState state) {
   }
 
   GPIO_WriteBit(gpio_port_map[address->port], 0x01 << address->pin, (BitAction)state);
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }
 
 StatusCode gpio_toggle_state(GPIOAddress *address) {
@@ -102,7 +102,7 @@ StatusCode gpio_toggle_state(GPIOAddress *address) {
   } else {
     GPIO_SetBits(gpio_port_map[address->port], pin);
   }
-  return true;
+  return STATUS_CODE_OK;
 }
 
 StatusCode gpio_get_value(GPIOAddress *address, GPIOState *input_state) {
@@ -111,5 +111,5 @@ StatusCode gpio_get_value(GPIOAddress *address, GPIOState *input_state) {
   }
 
   *input_state = GPIO_ReadInputDataBit(gpio_port_map[address->port], 0x01 << address->pin);
-  return status_code(STATUS_CODE_OK);
+  return STATUS_CODE_OK;
 }
