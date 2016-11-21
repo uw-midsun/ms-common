@@ -1,5 +1,41 @@
 #pragma once
 // Status Library for more verbose error handling
+//
+// Usage:
+// Use this library in any function where an error could occur. A verbose error will improve
+// debugability and allow for logging and attempts at recovery.
+//
+// If an error has occured in a function that returns a StatusCode then:
+// return status_code(SomeStatusCode);
+// OR
+// return status_msg(SomeStatusCode, "error message");
+//
+// If no error has occurred it is recommended to:
+// return STATUS_CODE_OK;
+//
+// To handle the returned error:
+// StatusCode status = some_func_that_returns_status();
+// if (!status_ok(status)) {
+//   // Do something to handle the error.
+//   // Optionally if recoverable:
+//   status_clear();
+// }
+// // Continue execution
+//
+// If you need to see the error beyond just the StatusCode in the event multiple callers could have
+// caused it or for debugging:
+// Status status = status_get();
+//
+// If it is necessary to forward the error down the stack then there are three options:
+// status_ok_or_return(some_func_that_returns_status());
+// OR
+// StatusCode status = some_func_that_returns_status();
+// if (!status_ok(status)) {
+//   // Maybe do a partial recovery or cleanup.
+//   return status;
+// }
+// OR
+// return some_func_that_returns_status();
 
 #include "misc.h"
 
@@ -35,10 +71,12 @@ Status status_get();
 
 // Macros for convenience.
 #define status_code(code) \
-  status_impl_update((code), (__FILE__ ":" STRINGIFY(__LINE__)), (__FUNCTION__), (""))
+  status_impl_update((code), (__FILE__ ":" STRINGIFY(__LINE__)), (__FUNCTION__), "")
 #define status_msg(code, message) \
   status_impl_update((code), (__FILE__ ":" STRINGIFY(__LINE__)), (__FUNCTION__), (message))
+#define status_ok(code) (STATUS_CODE_OK == (code))
+#define status_clear() status_msg(STATUS_CODE_OK, "Clear")
 
 // Use to forward failures or continue on success.
 #define status_ok_or_return(code) \
-  if (code) return code
+  if (code) return (code)

@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "status.h"
 #include "stm32f0xx.h"
 #include "stm32f0xx_gpio.h"
 #include "stm32f0xx_rcc.h"
@@ -34,18 +35,18 @@ static bool prv_are_settings_valid(const GPIOSettings *settings) {
            settings->resistor >= NUM_GPIO_RES || settings->alt_function >= NUM_GPIO_ALTFN);
 }
 
-bool gpio_init() {
+StatusCode gpio_init() {
   for (uint32_t i = 0; i < GPIO_NUM_PORTS; i++) {
     // Sets the pin to a default reset mode.
     // TODO(ELEC-20): determine if this is actually Lowest Power setting.
     GPIO_DeInit(gpio_port_map[i]);
   }
-  return true;
+  return STATUS_CODE_OK;
 }
 
-bool gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
+StatusCode gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
   if (!prv_is_address_valid(address) || !prv_are_settings_valid(settings)) {
-    return false;
+    return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   GPIO_InitTypeDef init_struct;
@@ -77,21 +78,21 @@ bool gpio_init_pin(GPIOAddress *address, GPIOSettings *settings) {
 
   // Use the init_struct to set the pin.
   GPIO_Init(gpio_port_map[address->port], &init_struct);
-  return true;
+  return STATUS_CODE_OK;
 }
 
-bool gpio_set_pin_state(GPIOAddress *address, GPIOState state) {
+StatusCode gpio_set_pin_state(GPIOAddress *address, GPIOState state) {
   if (!prv_is_address_valid(address) || !prv_is_state_valid(&state)) {
-    return false;
+    return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   GPIO_WriteBit(gpio_port_map[address->port], 0x01 << address->pin, (BitAction)state);
-  return true;
+  return STATUS_CODE_OK;
 }
 
-bool gpio_toggle_state(GPIOAddress *address) {
+StatusCode gpio_toggle_state(GPIOAddress *address) {
   if (!prv_is_address_valid(address)) {
-    return false;
+    return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   uint16_t pin = 0x01 << address->pin;
@@ -101,14 +102,14 @@ bool gpio_toggle_state(GPIOAddress *address) {
   } else {
     GPIO_SetBits(gpio_port_map[address->port], pin);
   }
-  return true;
+  return STATUS_CODE_OK;
 }
 
-bool gpio_get_value(GPIOAddress *address, GPIOState *input_state) {
+StatusCode gpio_get_value(GPIOAddress *address, GPIOState *input_state) {
   if (!prv_is_address_valid(address)) {
-    return false;
+    return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   *input_state = GPIO_ReadInputDataBit(gpio_port_map[address->port], 0x01 << address->pin);
-  return true;
+  return STATUS_CODE_OK;
 }

@@ -1,3 +1,4 @@
+#include "extra_unity.h"
 #include "objpool.h"
 #include "unity.h"
 
@@ -66,10 +67,11 @@ void test_objpool_too_many(void) {
 
 void test_objpool_invalid_free(void) {
   // Expect this not to segfault
-  TEST_ASSERT_FALSE(objpool_free_node(&gv_pool, NULL));
+  TEST_ASSERT_EQUAL(STATUS_CODE_INVALID_ARGS, objpool_free_node(&gv_pool, NULL));
 
   // Purposely access out of bounds memory
-  TEST_ASSERT_FALSE(objpool_free_node(&gv_pool, &gv_nodes[TEST_OBJPOOL_SIZE]));
+  TEST_ASSERT_EQUAL(STATUS_CODE_INVALID_ARGS,
+                    objpool_free_node(&gv_pool, &gv_nodes[TEST_OBJPOOL_SIZE]));
 }
 
 void test_objpool_free_other_pool(void) {
@@ -83,15 +85,13 @@ void test_objpool_free_other_pool(void) {
   node->data = 0x1234;
 
   // Invalid operation
-  TEST_ASSERT_FALSE(objpool_free_node(&gv_pool, node));
+  TEST_ASSERT_EQUAL(STATUS_CODE_INVALID_ARGS, objpool_free_node(&gv_pool, node));
 
   TEST_ASSERT_EQUAL(0x1234, node->data);
 }
 
 void test_objpool_copy_free(void) {
-  TestObject data = {
-    .data = 0x1234
-  };
+  TestObject data = { .data = 0x1234 };
 
   // Copy the data from the stack object. This will result in an invalid marker.
   TestObject *node = objpool_get_node(&gv_pool);
@@ -99,5 +99,5 @@ void test_objpool_copy_free(void) {
   *node = data;
 
   // We should still be able to free the node if this happens.
-  TEST_ASSERT_TRUE(objpool_free_node(&gv_pool, node));
+  TEST_ASSERT_OK(objpool_free_node(&gv_pool, node));
 }

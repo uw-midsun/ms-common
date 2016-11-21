@@ -2,7 +2,9 @@
 // Modified from http://cs.smu.ca/~pawan/teach/csc342/98-99-2/book/chapter9/minheap.h
 #include <stdlib.h>
 #include <string.h>
+
 #include "pqueue.h"
+#include "status.h"
 
 void pqueue_init(PQueue *queue, PQueueNode *nodes, size_t num_nodes) {
   memset(queue, 0, sizeof(*queue));
@@ -11,10 +13,10 @@ void pqueue_init(PQueue *queue, PQueueNode *nodes, size_t num_nodes) {
   queue->max_nodes = num_nodes - 1;  // 1-indexed heap - throw away one node
 }
 
-bool pqueue_push(PQueue *queue, void *data, uint16_t prio) {
+StatusCode pqueue_push(PQueue *queue, void *data, uint16_t prio) {
   if (queue->size == queue->max_nodes) {
-    // Ran out of space - TODO: handle errors better
-    return false;
+    // Ran out of space.
+    return status_code(STATUS_CODE_RESOURCE_EXHAUSTED);
   }
 
   // Begin at new leaf, bubble up
@@ -27,7 +29,7 @@ bool pqueue_push(PQueue *queue, void *data, uint16_t prio) {
   queue->nodes[i].prio = prio;
   queue->nodes[i].data = data;
 
-  return true;
+  return STATUS_CODE_OK;
 }
 
 void *pqueue_pop(PQueue *queue) {
