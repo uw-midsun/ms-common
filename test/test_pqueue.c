@@ -33,8 +33,11 @@ void test_pqueue_out_of_space(void) {
   // We're using a 1-indexed minheap, so only expect success up to (# nodes - 1)
   for (int i = 0; i < TEST_PQUEUE_SIZE + 5; i++) {
     StatusCode result = pqueue_push(&gv_queue, i, i);
-    TEST_ASSERT_EQUAL(
-        ((i + 1) < TEST_PQUEUE_SIZE) ? STATUS_CODE_OK : STATUS_CODE_RESOURCE_EXHAUSTED, result);
+    if ((i + 1) < TEST_PQUEUE_SIZE) {
+      TEST_ASSERT_EQUAL(STATUS_CODE_OK, result);
+    } else {
+      TEST_ASSERT_EQUAL(STATUS_CODE_RESOURCE_EXHAUSTED, result);
+    }
   }
 
   // If we attempt to continue popping data after clearing the queue, expect NULL.
