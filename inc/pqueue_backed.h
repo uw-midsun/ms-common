@@ -5,7 +5,7 @@
 
 typedef struct PQueueBacked {
   ObjectPool pool;
-  PQueue queue;
+  PQueue pqueue;
   size_t elem_size;
 } PQueueBacked;
 

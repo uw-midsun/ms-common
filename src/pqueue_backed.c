@@ -13,7 +13,7 @@ bool pqueue_backed_init_impl(PQueueBacked *queue, PQueueNode *nodes, void *elems
 
   queue->elem_size = elem_size;
 
-  pqueue_init(&queue->queue, nodes, num_nodes);
+  pqueue_init(&queue->pqueue, nodes, num_nodes);
   objpool_init_verbose(&queue->pool, elems, num_elems, elem_size, prv_init_node, queue);
 
   return true;
@@ -26,13 +26,13 @@ bool pqueue_backed_push(PQueueBacked *queue, void *elem, uint16_t prio) {
   }
 
   memcpy(node, elem, queue->elem_size);
-  pqueue_push(&queue->queue, node, prio);
+  pqueue_push(&queue->pqueue, node, prio);
 
   return true;
 }
 
 bool pqueue_backed_pop(PQueueBacked *queue, void *elem) {
-  void *node = pqueue_pop(&queue->queue);
+  void *node = pqueue_pop(&queue->pqueue);
   if (node == NULL) {
     return false;
   }
@@ -44,5 +44,5 @@ bool pqueue_backed_pop(PQueueBacked *queue, void *elem) {
 }
 
 size_t pqueue_backed_size(PQueueBacked *queue) {
-  return pqueue_size(&queue->queue);
+  return pqueue_size(&queue->pqueue);
 }
