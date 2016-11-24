@@ -61,7 +61,7 @@ typedef struct Status {
   const char* message;
 } Status;
 
-typedef void (*status_callback)(const Status* status);
+typedef void (*status_callback)(Status *const status);
 
 // Updates a status struct containing an error code and optionally a message. This should only be
 // called via the macros.
