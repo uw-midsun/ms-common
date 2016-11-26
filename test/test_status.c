@@ -1,5 +1,8 @@
 #include "status.h"
 
+#include <stdbool.h>
+#include <stdio.h>
+
 #include "misc.h"
 #include "unity.h"
 
@@ -63,8 +66,6 @@ void test_status_ok_or_return(void) {
   TEST_ASSERT_EQUAL(STATUS_CODE_TIMEOUT, status.code);
   TEST_ASSERT_EQUAL_STRING("prv_ok_or_return", status.caller);
   TEST_ASSERT_EQUAL_STRING("This should work.", status.message);
-  // THIS LINE IS SUPER EASY TO BREAK IF ANYTHING CHANGES ABOVE.
-  TEST_ASSERT_EQUAL_STRING(__FILE__ ":" STRINGIFY(55), status.source);
 }
 
 void test_status_clear(void) {
@@ -74,4 +75,18 @@ void test_status_clear(void) {
   TEST_ASSERT_EQUAL(STATUS_CODE_OK, status.code);
   TEST_ASSERT_EQUAL_STRING("test_status_clear", status.caller);
   TEST_ASSERT_EQUAL_STRING("Clear", status.message);
+}
+
+static bool s_foo = false;
+
+static void prv_test_callback(Status* status) {
+  s_foo = true;
+  printf("CODE:%d:%s:%s: %s\n", status->code, status->source, status->caller, status->message);
+}
+
+void test_status_register_callback(void) {
+  status_register_callback(prv_test_callback);
+  TEST_ASSERT_FALSE(s_foo);
+  status_msg(STATUS_CODE_EMPTY, "This is cool!");
+  TEST_ASSERT_TRUE(s_foo);
 }

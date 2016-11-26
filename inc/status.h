@@ -61,6 +61,8 @@ typedef struct Status {
   const char* message;
 } Status;
 
+typedef void (*status_callback)(const Status* status);
+
 // Updates a status struct containing an error code and optionally a message. This should only be
 // called via the macros.
 StatusCode status_impl_update(const StatusCode code, const char* source, const char* caller,
@@ -68,6 +70,9 @@ StatusCode status_impl_update(const StatusCode code, const char* source, const c
 
 // Get a copy of the global status so it can be used safely.
 Status status_get();
+
+// Set a callback that is run whenever the status is changed.
+void status_register_callback(status_callback callback);
 
 // Macros for convenience.
 #define status_code(code) \
