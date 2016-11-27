@@ -14,7 +14,7 @@ StatusCode exti_enable(uint8_t line, EXTISettings* settings) {
 
   // Note the way mode and trigger are set here is somewhat dangerous.
   EXTI_InitTypeDef init_struct = {.EXTI_Line = 0x01 << line,
-                                  .EXTI_Mode = 0x04 << settings->type,
+                                  .EXTI_Mode = 0x04 * settings->type,
                                   .EXTI_Trigger = 0x08 + 0x04 * settings->edge,
                                   .EXTI_LineCmd = ENABLE };
   EXTI_Init(&init_struct);
