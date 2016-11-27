@@ -16,7 +16,7 @@ void teardown_test(void) {}
 
 // Test an invalid enable.
 void test_exti_enable_invalid(void) {
-  EXTISettings settings = {.type = EXTI_TYPE_INTERRUPT, .edge = EXTI_EDGE_RISING };
+  EXTISettings settings = { .type = EXTI_TYPE_INTERRUPT, .edge = EXTI_EDGE_RISING };
   TEST_ASSERT_EQUAL(STATUS_CODE_INVALID_ARGS, exti_enable(INVALID_LINE, &settings));
   settings.type = NUM_EXTI_TYPE;
   TEST_ASSERT_EQUAL(STATUS_CODE_INVALID_ARGS, exti_enable(VALID_LINE, &settings));
@@ -51,7 +51,7 @@ void test_exti_clear_pending_invalid(void) {
 
 // A test of the behavior of all the exti components
 void test_exti_e2e(void) {
-  EXTISettings settings = {.type = EXTI_TYPE_INTERRUPT, .edge = EXTI_EDGE_RISING };
+  EXTISettings settings = { .type = EXTI_TYPE_INTERRUPT, .edge = EXTI_EDGE_RISING };
   TEST_ASSERT_OK(exti_enable(VALID_LINE, &settings));
   EXTIPending pending_bit;
   TEST_ASSERT_OK(exti_get_pending(VALID_LINE, &pending_bit));
