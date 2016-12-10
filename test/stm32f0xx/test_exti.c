@@ -1,11 +1,17 @@
+// This covers testing both external interrupts and the functionality of NVIC.
+
 #include <stdint.h>
 
-#include "exti.h"
 #include "extra_unity.h"
 #include "status.h"
+#include "stm32f0xx/exti.h"
+#include "stm32f0xx/nvic.h"
 #include "unity.h"
 
-void setup_test(void) {}
+void setup_test(void) {
+  // Enable nested interrupts on EXTI0_1.
+  nvic_enable(5, 2);
+}
 
 void teardown_test(void) {}
 
@@ -16,7 +22,7 @@ void teardown_test(void) {}
 
 // Test an invalid enable.
 void test_exti_enable_invalid(void) {
-  EXTISettings settings = { .type = EXTI_TYPE_INTERRUPT, .edge = EXTI_EDGE_RISING };
+  EXTISettings settings = {.type = EXTI_TYPE_INTERRUPT, .edge = EXTI_EDGE_RISING };
   TEST_ASSERT_EQUAL(STATUS_CODE_INVALID_ARGS, exti_enable(INVALID_LINE, &settings));
   settings.type = NUM_EXTI_TYPE;
   TEST_ASSERT_EQUAL(STATUS_CODE_INVALID_ARGS, exti_enable(VALID_LINE, &settings));
@@ -51,7 +57,7 @@ void test_exti_clear_pending_invalid(void) {
 
 // A test of the behavior of all the exti components
 void test_exti_e2e(void) {
-  EXTISettings settings = { .type = EXTI_TYPE_INTERRUPT, .edge = EXTI_EDGE_RISING };
+  EXTISettings settings = {.type = EXTI_TYPE_INTERRUPT, .edge = EXTI_EDGE_RISING };
   TEST_ASSERT_OK(exti_enable(VALID_LINE, &settings));
   EXTIPending pending_bit;
   TEST_ASSERT_OK(exti_get_pending(VALID_LINE, &pending_bit));

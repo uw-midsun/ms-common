@@ -3,33 +3,31 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "exti.h"
 #include "gpio.h"
+#include "interrupt.h"
 #include "misc.h"
-#include "nvic.h"
 #include "status.h"
 #include "stm32f0xx.h"
+#include "stm32f0xx/exti.h"
+#include "stm32f0xx/gpio_mcu.h"
+#include "stm32f0xx/nvic.h"
 #include "stm32f0xx_rcc.h"
 #include "stm32f0xx_syscfg.h"
 
-#define GPIO_NUM_PINS 16
-#define GPIO_NUM_PORTS 6
-#define GPIO_IT_MAX_PRIORITY 4
+static interrupt_callback s_gpio_it_callbacks[NUM_GPIO_PINS];
 
-static gpio_it_callback s_gpio_it_callbacks[GPIO_NUM_PINS];
-
-StatusCode gpio_it_enable(GPIOAddress *address, GPIOITSettings *settings,
-                          gpio_it_callback callback) {
-  if (address->port >= GPIO_NUM_PORTS || address->pin >= GPIO_NUM_PINS ||
-      settings->edge >= NUM_GPIO_IT_EDGE || settings->type >= NUM_GPIO_IT_TYPE ||
-      settings->priority >= GPIO_IT_MAX_PRIORITY) {
+StatusCode gpio_it_enable(GPIOAddress *address, InterruptSettings *settings,
+                          interrupt_callback callback) {
+  if (address->port >= NUM_GPIO_PORTS || address->pin >= NUM_GPIO_PINS ||
+      settings->edge >= NUM_INTERRUPT_EDGE || settings->type >= NUM_INTERRUPT_TYPE ||
+      settings->priority >= NUM_INTERRUPT_PRIORITY) {
     return status_code(STATUS_CODE_INVALID_ARGS);
   }
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
   SYSCFG_EXTILineConfig(address->port, address->pin);
 
-  EXTISettings exti_settings = { .type = (EXTIType)settings->type,
+  EXTISettings exti_settings = {.type = (EXTIType)settings->type,
                                 .edge = (EXTIEdge)settings->edge };
   exti_enable(address->pin, &exti_settings);
 
@@ -72,4 +70,12 @@ void EXTI2_3_IRQHandler(void) {
 
 void EXTI4_15_IRQHandler(void) {
   prv_run_callbacks(4, 16);
+}
+
+StatusCode gpio_it_sw_interrupt(GPIOAddress *address) {
+  if (address->port >= NUM_GPIO_PORTS || address->pin >= NUM_GPIO_PINS) {
+    return status_code(STATUS_CODE_INVALID_ARGS);
+  }
+
+  exti_software_interrupt(address->pin);
 }
