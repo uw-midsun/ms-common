@@ -4,7 +4,7 @@
 #include "unity.h"
 
 static StatusCode prv_raise_event(uint16_t i) {
-  Event e = { .id = i, .data = i * 100 };
+  Event e = {.id = i, .data = i * 100 };
 
   return event_raise(&e);
 }
@@ -13,7 +13,7 @@ void setup_test(void) {
   event_queue_init();
 }
 
-void teardown_test(void) { }
+void teardown_test(void) {}
 
 void test_event_queue_raise(void) {
   // Fill the event queue
