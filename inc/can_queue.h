@@ -5,7 +5,9 @@
 #define CAN_QUEUE_SIZE 10
 
 // 11 bits: 6 -> message ID, 5 -> device ID
+// TODO(ELEC-55): check struct padding
 typedef struct CANMessage {
+  ObjectMarker marker;
   union {
     uint16_t id;
     struct {
@@ -31,8 +33,10 @@ typedef struct CANQueue {
 
 void can_queue_init(CANQueue *queue);
 
-bool can_queue_push(CANQueue *queue, const CANMessage *msg);
+StatusCode can_queue_push(CANQueue *queue, const CANMessage *msg);
 
-bool can_queue_pop(CANQueue *queue, CANMessage *msg);
+StatusCode can_queue_pop(CANQueue *queue, CANMessage *msg);
+
+StatusCode can_queue_peek(CANQueue *queue, CANMessage *msg);
 
 size_t can_queue_size(CANQueue *queue);

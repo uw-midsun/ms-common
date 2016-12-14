@@ -5,7 +5,7 @@
 #define CAN_PRESCALER 12
 
 // CAN ports
-static volatile CANConfig *s_can[1];
+static volatile CANConfig *s_can;
 
 static bool prv_transmit(const CANConfig *can, const CANMessage *msg) {
   CanTxMsg tx_msg = {
@@ -51,8 +51,8 @@ void can_init(CANConfig *can) {
   can_queue_init(&can->tx_queue);
   can_queue_init(&can->rx_queue);
 
-  // TODO: Do we need to support multiple CAN ports?
-  s_can[0] = can;
+  // TODO(ELEC-55): Do we need to support multiple CAN ports?
+  s_can = can;
 
   GPIOSettings gpio_settings = {
     .resistor = GPIO_RES_PULLUP,
@@ -99,12 +99,17 @@ void can_init(CANConfig *can) {
   can->num_filters = 0;
 }
 
-bool can_add_filter(CANConfig *can, uint16_t filter, uint16_t mask) {
+StatusCode can_add_filter(CANConfig *can, uint16_t filter, uint16_t mask) {
+  if (!IS_CAN_FILTER_NUMBER(can->num_filters)) {
+    return status_code(STATUS_CODE_INVALID_ARGS);
+  }
+
   // Distribute filters evenly between the two RX FIFOs
-  volatile CAN_FilterInitTypeDef filter_cfg = {
+  // TODO(ELEC-55): Figure out good way to use 16bit filters
+  CAN_FilterInitTypeDef filter_cfg = {
     .CAN_FilterNumber = can->num_filters,
     .CAN_FilterMode = CAN_FilterMode_IdMask,
-    .CAN_FilterScale = CAN_FilterScale_32bit, // TODO: Figure out good way to use 16bit filters
+    .CAN_FilterScale = CAN_FilterScale_32bit,
     .CAN_FilterIdHigh = filter << 5,
     .CAN_FilterIdLow = 0x0000,
     .CAN_FilterMaskIdHigh = mask << 5,
@@ -115,30 +120,59 @@ bool can_add_filter(CANConfig *can, uint16_t filter, uint16_t mask) {
   CAN_FilterInit(&filter_cfg);
 
   can->num_filters++;
-  return true;
+  return STATUS_CODE_OK;
 }
 
-bool can_transmit(CANConfig *can, const CANMessage *msg) {
-  // If all of our TX mailboxes were full, try to put it into the TX queue
+StatusCode can_transmit(CANConfig *can, const CANMessage *msg) {
+  CANMessage prio_msg;
+
+  // Attempts to transmit the highest priority message.
+  if (can_queue_size(&can->tx_queue) > 0) {
+    can_queue_peek(&can->tx_queue, &prio_msg);
+    if (prio_msg.id < msg->id) {
+      can_queue_pop(&can->tx_queue, NULL);
+      msg = &prio_msg;
+    }
+  }
+
   bool success = prv_transmit(can, msg);
+  if (!success) {
+    return can_queue_push(&can->tx_queue, msg);
+  }
 
-  return success || can_queue_push(&can->tx_queue, msg);
+  return STATUS_CODE_OK;
 }
 
-bool can_receive(CANConfig *can, CANMessage *msg) {
+StatusCode can_receive(CANConfig *can, CANMessage *msg) {
   return can_queue_pop(&can->rx_queue, msg);
 }
 
 void CEC_CAN_IRQHandler(void) {
   CANMessage temp;
   if (CAN_GetITStatus(CAN, CAN_IT_TME) == SET) {
-    while (can_queue_pop(&s_can[0]->tx_queue, &temp)) {
-      prv_transmit(s_can[0], &temp);
-    }
+    // Attempt to fill the TX mailboxes
+    while (can_queue_size(&s_can->tx_queue) > 0) {
+      can_queue_peek(&s_can->tx_queue, &temp);
+      bool tx_success = prv_transmit(s_can, &temp);
 
+      if (!tx_success) {
+        break;
+      }
+
+      can_queue_pop(&s_can->tx_queue, NULL);
+    }
     CAN_ClearITPendingBit(CAN, CAN_IT_TME);
   }
 
-  while (prv_receive(s_can[0], CAN_Filter_FIFO0)) { }
-  while (prv_receive(s_can[0], CAN_Filter_FIFO1)) { }
+  bool rx_callback = false;
+  while (prv_receive(s_can, CAN_Filter_FIFO0) ||
+         prv_receive(s_can, CAN_Filter_FIFO1)) {
+    rx_callback = true;
+  }
+
+  // Only create one event for any amount of RX events
+  if (rx_callback) {
+    Event e = { .id = s_can->event_id };
+    event_raise(&e);
+  }
 }
